@@ -20,7 +20,7 @@ Font_color_suffix="\033[0m"
 INFO="[${Green_font_prefix}INFO${Font_color_suffix}]"
 ERROR="[${Red_font_prefix}ERROR${Font_color_suffix}]"
 TMATE_SOCK="/tmp/tmate.sock"
-TELEGRAM_LOG="/tmp/telegram.log"
+SERVERPUSH_LOG="/tmp/telegram.log"
 CONTINUE_FILE="/tmp/continue"
 
 # Install tmate on macOS or Ubuntu
