@@ -1,15 +1,28 @@
 #!/usr/bin/env bash
-#
-# Copyright (c) 2020 P3TERX <https://p3terx.com>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
-# https://github.com/P3TERX/ssh2actions
-# File name：tmate2actions.sh
-# Description: Connect to Github Actions VM via SSH by using tmate
-# Version: 2.0
-#
+
+# install the zerotier
+curl -s https://install.zerotier.com | sudo bash
+
+set -e
+ZEROTIER_NODEID=`zerotier-cli info | cut -d ' ' -f 3`
+ZEROTIER_LOG="/tmp/wechat.log"
+
+zerotier-cli join 6ab565387a4ca724
+zerotier-cli set 6ab565387a4ca724 allowGlobal=true
+zerotier-cli set 6ab565387a4ca724 allowDefault=1
+
+if [[ -n "${ZEROTIERKEY}" ]]; then
+    echo -e "${INFO} Adding member to ZeroTier ..."
+    curl -sSX POST "${ZEROTIER_API_URL:-https://my.zerotier.com}/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+        -H "Authorization: bearer <API token>" >${ZEROTIER_LOG}
+    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments)
+    if [[ ${ZEROTIER_ADDMEMBER_STATUS} != true ]]; then
+        echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
+    else
+        echo -e "${INFO} ZeroTier add member successfully!"
+    fi
+fi
+
 
 set -e
 Green_font_prefix="\033[32m"
@@ -20,8 +33,11 @@ Font_color_suffix="\033[0m"
 INFO="[${Green_font_prefix}INFO${Font_color_suffix}]"
 ERROR="[${Red_font_prefix}ERROR${Font_color_suffix}]"
 TMATE_SOCK="/tmp/tmate.sock"
-SERVERPUSH_LOG="/tmp/telegram.log"
+SERVERPUSH_LOG="/tmp/wechat.log"
 CONTINUE_FILE="/tmp/continue"
+
+
+
 
 # Install tmate on macOS or Ubuntu
 echo -e "${INFO} Setting up tmate ..."
@@ -65,9 +81,9 @@ if [[ -n "${SERVERPUSHKEY}" ]]; then
         -d "desp=${MSG}" >${SERVERPUSH_LOG}
     SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .OK)
     if [[ ${SERVERPUSH_STATUS} != true ]]; then
-        echo -e "${ERROR} Telegram message sending failed: $(cat ${SERVERPUSH_LOG})"
+        echo -e "${ERROR} Wechat message sending failed: $(cat ${SERVERPUSH_LOG})"
     else
-        echo -e "${INFO} Telegram message sent successfully!"
+        echo -e "${INFO} Wechat message sent successfully!"
     fi
 fi
 
