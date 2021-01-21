@@ -6,8 +6,7 @@ curl -s https://install.zerotier.com | sudo bash
 set -e
 ZEROTIER_NODEID=`sudo zerotier-cli info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
-ZEROTIER_NETWORK_ID_TEMP=${ZEROTIER_NETWORK_ID}
-ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID_TEMP:0:10}
+ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
 
 sudo zerotier-cli join ${ZEROTIER_NETWORK_ID}
 sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowGlobal=true
@@ -26,8 +25,8 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
         -H "Authorization: bearer ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.242.9.49"]}}' >${ZEROTIER_LOG}
-    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments)
-    if [[ ${ZEROTIER_ADDMEMBER_STATUS} != true ]]; then
+    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+    if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
         echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
     else
         echo -e "${INFO} ZeroTier add member successfully!"
