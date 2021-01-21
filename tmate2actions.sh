@@ -7,11 +7,10 @@ set -e
 ZEROTIER_NODEID=`zerotier-cli info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/wechat.log"
 
-sudo -i
 
-zerotier-cli join 6ab565387a4ca724
-zerotier-cli set 6ab565387a4ca724 allowGlobal=true
-zerotier-cli set 6ab565387a4ca724 allowDefault=1
+sudo zerotier-cli join 6ab565387a4ca724
+sudo zerotier-cli set 6ab565387a4ca724 allowGlobal=true
+sudo zerotier-cli set 6ab565387a4ca724 allowDefault=1
 
 if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} Adding member to ZeroTier ..."
