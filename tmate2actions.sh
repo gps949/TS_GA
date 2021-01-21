@@ -168,7 +168,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": true,"name": "","description": "","online": false,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": false,"ipAssignments": []}}' >${ZEROTIER_LOG}
     ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
-    if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
+    if [[ ${ZEROTIER_ADDMEMBER_STATUS} != null ]]; then
         echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
     else
         echo -e "${INFO} ZeroTier del member successfully!"
