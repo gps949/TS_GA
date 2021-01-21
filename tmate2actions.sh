@@ -6,7 +6,8 @@ curl -s https://install.zerotier.com | sudo bash
 set -e
 ZEROTIER_NODEID=`sudo zerotier-cli info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
-ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
+ZEROTIER_NETWORK_ID_TEMP=${ZEROTIER_NETWORK_ID}
+ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID_TEMP:0:10}
 
 sudo zerotier-cli join ${ZEROTIER_NETWORK_ID}
 sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowGlobal=true
