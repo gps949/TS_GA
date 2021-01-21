@@ -21,6 +21,7 @@ jobs:
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
           ZEROTIERKEY: ${{secrets.ZEROTIERKEY}}
+          ZEROTIER_NETWORK_ID: ${{secrets.ZEROTIER_NETWORKID}}
         run: ./tmate2actions.sh
         shell: bash
 
