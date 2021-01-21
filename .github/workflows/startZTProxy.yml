@@ -20,6 +20,7 @@ jobs:
       - name: ssh vps
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
+          ZEROTIERKEY: ${{secrets.ZEROTIERKEY}}
         run: ./tmate2actions.sh
         shell: bash
 
