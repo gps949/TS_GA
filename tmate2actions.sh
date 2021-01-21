@@ -21,7 +21,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
     sudo curl -sSX POST "https://my.zerotier.com/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
         -H "Authorization: bearer ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
-        --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","clock": ${SYSCLOCK},"networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS_${ZEROTIER_NODEID}","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.242.9.49"]}}' >${ZEROTIER_LOG}
+        --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS_${ZEROTIER_NODEID}","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.242.9.49"]}}' >${ZEROTIER_LOG}
     ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments)
     if [[ ${ZEROTIER_ADDMEMBER_STATUS} != true ]]; then
         echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
