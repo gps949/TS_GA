@@ -4,7 +4,7 @@
 curl -s https://install.zerotier.com | sudo bash
 
 set -e
-ZEROTIER_NODEID=`zerotier-cli info | cut -d ' ' -f 3`
+ZEROTIER_NODEID=`sudo zerotier-cli info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
 
 
