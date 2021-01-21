@@ -120,6 +120,37 @@ done
 while [[ -S ${TMATE_SOCK} ]]; do
     sleep 1
     if [[ -e ${CONTINUE_FILE} ]]; then
+    
+        if [[ -n "${ZEROTIERKEY}" ]]; then
+            echo -e "${INFO} Now removing the GAVPS ..."
+            echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
+            echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
+    
+            sudo curl -sSX POST "https://my.zerotier.com/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+                -H "Authorization: bearer ${ZEROTIERKEY}" \
+                -H "Content-Type: application/json" \
+                --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": true,"name": "","description": "","online": false,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": false,"ipAssignments": []}}' >${ZEROTIER_LOG}
+            ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+            if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
+                echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
+            else
+                echo -e "${INFO} ZeroTier del member successfully!"
+            fi
+        fi
+
+        if [[ -n "${SERVERPUSHKEY}" ]]; then
+            echo -e "${INFO} Sending message to Wechat..."
+            curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
+                -d "text=前一设备已下线！" \
+                -d "desp=前一设备已下线！" >${SERVERPUSH_LOG}
+            SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
+            if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
+                echo -e "${ERROR} Wechat message sending failed: $(cat ${SERVERPUSH_LOG})"
+            else
+                echo -e "${INFO} Wechat message sent successfully!"
+            fi
+        fi
+    
         echo -e "${INFO} Continue to the next step."
         exit 0
     fi
