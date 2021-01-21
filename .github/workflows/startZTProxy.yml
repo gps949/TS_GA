@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: ssh vps
-        run: tmate2actions.sh
+        run: ./tmate2actions.sh
         shell: bash
 
       # Runs a single command using the runners shell
