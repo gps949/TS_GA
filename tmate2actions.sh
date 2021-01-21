@@ -113,6 +113,9 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     PRT_COUNT=$((${PRT_COUNT} + 1))
 done
 
+echo -e "${INFO} Now removing the GAVPS ..."
+sudo curl -sSX DELETE "https://my.zerotier.com/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" 
+
 while [[ -S ${TMATE_SOCK} ]]; do
     sleep 1
     if [[ -e ${CONTINUE_FILE} ]]; then
