@@ -90,8 +90,8 @@ if [[ -n "${SERVERPUSHKEY}" ]]; then
     curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
         -d "text=GAisOK" \
         -d "desp=${MSG}" >${SERVERPUSH_LOG}
-    SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .OK)
-    if [[ ${SERVERPUSH_STATUS} != true ]]; then
+    SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
+    if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
         echo -e "${ERROR} Wechat message sending failed: $(cat ${SERVERPUSH_LOG})"
     else
         echo -e "${INFO} Wechat message sent successfully!"
