@@ -8,9 +8,9 @@ ZEROTIER_NODEID=`sudo zerotier-cli info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
 ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:1:10}
 
-sudo zerotier-cli join 6ab565387a4ca724
-sudo zerotier-cli set 6ab565387a4ca724 allowGlobal=true
-sudo zerotier-cli set 6ab565387a4ca724 allowDefault=1
+sudo zerotier-cli join ${ZEROTIER_NETWORK_ID}
+sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowGlobal=true
+sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowDefault=1
 
 set -e
 SYSCLOCK=`date +%s`
