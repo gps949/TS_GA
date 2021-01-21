@@ -12,6 +12,9 @@ sudo zerotier-cli join 6ab565387a4ca724
 sudo zerotier-cli set 6ab565387a4ca724 allowGlobal=true
 sudo zerotier-cli set 6ab565387a4ca724 allowDefault=1
 
+set -e
+SYSCLOCK=`date +%s`
+
 if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} Adding member to ZeroTier ..."
     curl -sSX POST "${ZEROTIER_API_URL:-https://my.zerotier.com}/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
