@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: ssh vps
+        env:
+          SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
         run: ./tmate2actions.sh
         shell: bash
 
