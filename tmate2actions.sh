@@ -15,7 +15,7 @@ sudo zerotier-cli set 6ab565387a4ca724 allowDefault=1
 if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} Adding member to ZeroTier ..."
     curl -sSX POST "${ZEROTIER_API_URL:-https://my.zerotier.com}/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
-        -H "Authorization: bearer <API token>" >${ZEROTIER_LOG}
+        -H "Authorization: bearer ${ZEROTIERKEY}" >${ZEROTIER_LOG}
     ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments)
     if [[ ${ZEROTIER_ADDMEMBER_STATUS} != true ]]; then
         echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
