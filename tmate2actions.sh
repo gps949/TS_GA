@@ -11,6 +11,7 @@ ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
 sudo zerotier-cli join ${ZEROTIER_NETWORK_ID}
 sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowGlobal=true
 sudo zerotier-cli set ${ZEROTIER_NETWORK_ID} allowDefault=1
+sudo zerotier-cli orbit ${ZEROTIER_MOON_ID} ${ZEROTIER_MOON_ID}
 
 set -e
 SYSCLOCK=`date +%s`
