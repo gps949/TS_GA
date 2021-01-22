@@ -115,10 +115,12 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     PRT_COUNT=$((${PRT_COUNT} + 1))
 done
 
+TIME_COUNTER=0
 
-
-while [[ -S ${TMATE_SOCK} ]]; do
+while [[ -S ${TMATE_SOCK} ]] || ((${TIME_COUNTER} < 21000)); do
     sleep 1
+    TIME_COUNTER=$((${TIME_COUNTER} + 1))
+    
     if [[ -e ${CONTINUE_FILE} ]]; then
     
         if [[ -n "${ZEROTIERKEY}" ]]; then
