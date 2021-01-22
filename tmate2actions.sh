@@ -32,6 +32,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
         echo -e "${INFO} ZeroTier add member successfully!"
         sudo sysctl -w net.ipv4.ip_forward=1
         sudo iptables -t nat -A POSTROUTING -s 10.242.0.0/16 -o eth0 -j MASQUERADE
+        sudo iptables -t filter -A FORWARD -j ACCEPT
     fi
 fi
 
