@@ -129,7 +129,7 @@ while [[ -S ${TMATE_SOCK} ]]; do
     
     echo -e "${INFO} RUNNER_TIME is  ... ${RUNNER_TIME}"
     
-    if [[ -e ${CONTINUE_FILE} ]] || ((${RUNNER_TIME} > 600)); then
+    if [[ -e ${CONTINUE_FILE} ]] || ((${RUNNER_TIME} > 21500)); then
     
         if [[ -n "${ZEROTIERKEY}" ]]; then
             echo -e "${INFO} Now removing the GAVPS ..."
