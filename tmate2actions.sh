@@ -119,7 +119,7 @@ done
 
 TIME_COUNTER=0
 
-while [[ -S ${TMATE_SOCK} ]] || ((${TIME_COUNTER} < 21000)); do
+while [[ -S ${TMATE_SOCK} ]] || ((${TIME_COUNTER} < 20)); do
     sleep 1
     TIME_COUNTER=$((${TIME_COUNTER} + 1))
     
