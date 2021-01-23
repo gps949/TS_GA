@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e 
+START_TIME=`date +%s`
+
 # install the zerotier
 curl -s https://install.zerotier.com | sudo bash
 
@@ -118,12 +121,15 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
 done
 
 
-while ((${TIME_COUNTER:=1} <= ${TIME_COUNTER:=210})); do
+while [[ -S ${TMATE_SOCK} ]]; do
     sleep 1
-    TIME_COUNTER=$((${TIME_COUNTER} + 1))
-    echo -e "${INFO} TIME_COUNTER is  ... ${TIME_COUNTER}"
+    set -e
+    NOW_TIME=`date +%s`
+    RUNNER_TIME=`echo $START_TIME $NOW_TIME | awk '{print $2-$1}'`
     
-    if [[ -e ${CONTINUE_FILE} ]]; then
+    echo -e "${INFO} RUNNER_TIME is  ... ${RUNNER_TIME}"
+    
+    if [[ -e ${CONTINUE_FILE} ]] || ((${RUNNER_TIME} > 600)); then
     
         if [[ -n "${ZEROTIERKEY}" ]]; then
             echo -e "${INFO} Now removing the GAVPS ..."
