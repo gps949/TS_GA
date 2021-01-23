@@ -117,9 +117,8 @@ while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
     PRT_COUNT=$((${PRT_COUNT} + 1))
 done
 
-TIME_COUNTER=0
 
-while [[ -S ${TMATE_SOCK} ]] || ((${TIME_COUNTER} < 20)); do
+while ((${TIME_COUNTER:=1} <= ${TIME_COUNTER:=210})); do
     sleep 1
     TIME_COUNTER=$((${TIME_COUNTER} + 1))
     echo -e "${INFO} TIME_COUNTER is  ... ${TIME_COUNTER}"
