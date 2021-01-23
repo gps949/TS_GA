@@ -122,6 +122,7 @@ TIME_COUNTER=0
 while [[ -S ${TMATE_SOCK} ]] || ((${TIME_COUNTER} < 20)); do
     sleep 1
     TIME_COUNTER=$((${TIME_COUNTER} + 1))
+    echo -e "${INFO} TIME_COUNTER is  ... ${TIME_COUNTER}"
     
     if [[ -e ${CONTINUE_FILE} ]]; then
     
