@@ -9,6 +9,7 @@ sudo chmod +x ./zerotier-one
 
 sudo ./zerotier-one -d
 
+sleep 3
 set -e
 ZEROTIER_NODEID=`sudo ./zerotier-one -q info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
