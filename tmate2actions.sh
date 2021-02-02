@@ -45,7 +45,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
 
 
-    sudo curl -sSX POST "https://ztncui.gps949.com:3443/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+    sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
         -H "Authorization: bearer ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.99.40.49"]}}' >${ZEROTIER_LOG}
