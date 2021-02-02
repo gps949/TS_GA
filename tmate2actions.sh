@@ -49,7 +49,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
         -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": true,"ipAssignments": ["10.99.40.49"]}' >${ZEROTIER_LOG}
-    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
     if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
         echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
     else
@@ -145,7 +145,7 @@ while [[ -S ${TMATE_SOCK} ]]; do
                 -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
                 -H "Content-Type: application/json" \
                 --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
-            ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+            ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
             if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
                 echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
             else
@@ -182,7 +182,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
         -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
-    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
     if [[ ${ZEROTIER_ADDMEMBER_STATUS} != null ]]; then
         echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
     else
