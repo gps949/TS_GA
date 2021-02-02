@@ -15,10 +15,12 @@ ZEROTIER_LOG="/tmp/zerotier_add_member.log"
 ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
 
 sleep 3
-
 sudo ./zerotier-one -q join ${ZEROTIER_NETWORK_ID}
+sleep 3
 sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowGlobal=true
+sleep 3
 sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowDefault=1
+sleep 3
 #sudo zerotier-one -q orbit ${ZEROTIER_MOON_ID} ${ZEROTIER_MOON_ID}
 
 set -e
