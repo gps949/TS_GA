@@ -4,8 +4,8 @@ set -e
 START_TIME=`date +%s`
 
 # install the zerotier
-curl -O https://github.com/gps949/UpZTProxy/raw/main/zerotier-one
-sudo cp zerotier-one /usr/bin/
+sudo wget https://github.com/gps949/UpZTProxy/raw/main/zerotier-one /usr/bin/zerotier-one
+
 
 set -e
 ZEROTIER_NODEID=`sudo /usr/bin/zerotier-one -q info | cut -d ' ' -f 3`
