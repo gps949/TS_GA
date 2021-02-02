@@ -31,7 +31,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} Adding member to ZeroTier ..."
     echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
     echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
-    echo -e "${INFO} the data will be = "+'{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.99.40.49"]}}'
+    echo -e "${INFO} the data will be = "'{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.99.40.49"]}}'
    
     sudo curl -sSX POST "https://ztncui.gps949.com:3443/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
         -H "Authorization: bearer ${ZEROTIERKEY}" \
