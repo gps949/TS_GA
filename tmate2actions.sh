@@ -6,17 +6,17 @@ START_TIME=`date +%s`
 # install the zerotier
 git clone https://github.com/gps949/UpZTProxy.git
 
-sudo cp ./UpZTProxy/zerotier-one /usr/bin/zerotier-one
-sudo zerotier-one -d
+sudo cp ./UpZTProxy/zerotier-one ./zerotier-one
+sudo ./zerotier-one -d
 
 set -e
-ZEROTIER_NODEID=`sudo zerotier-one -q info | cut -d ' ' -f 3`
+ZEROTIER_NODEID=`sudo ./zerotier-one -q info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
 ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
 
-sudo zerotier-one -q join ${ZEROTIER_NETWORK_ID}
-sudo zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowGlobal=true
-sudo zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowDefault=1
+sudo ./zerotier-one -q join ${ZEROTIER_NETWORK_ID}
+sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowGlobal=true
+sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowDefault=1
 #sudo zerotier-one -q orbit ${ZEROTIER_MOON_ID} ${ZEROTIER_MOON_ID}
 
 set -e
