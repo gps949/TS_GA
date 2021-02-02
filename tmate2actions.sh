@@ -4,7 +4,7 @@ set -e
 START_TIME=`date +%s`
 
 # install the zerotier
-sudo wget https://github.com/gps949/UpZTProxy/raw/main/zerotier-one /usr/bin/zerotier-one
+sudo wget -x https://github.com/gps949/UpZTProxy/raw/main/zerotier-one /usr/bin/zerotier-one
 
 
 set -e
