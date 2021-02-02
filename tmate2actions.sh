@@ -14,6 +14,36 @@ ZEROTIER_NODEID=`sudo ./zerotier-one -q info | cut -d ' ' -f 3`
 ZEROTIER_LOG="/tmp/zerotier_add_member.log"
 ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
 
+sleep 3
+
+sudo ./zerotier-one -q join ${ZEROTIER_NETWORK_ID}
+sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowGlobal=true
+sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowDefault=1
+#sudo zerotier-one -q orbit ${ZEROTIER_MOON_ID} ${ZEROTIER_MOON_ID}
+
+set -e
+SYSCLOCK=`date +%s`
+
+if [[ -n "${ZEROTIERKEY}" ]]; then
+    echo -e "${INFO} Adding member to ZeroTier ..."
+    echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
+    echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
+    
+   
+    sudo curl -sSX POST "https://ztncui.gps949.com:3443/api/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+        -H "Authorization: bearer ${ZEROTIERKEY}" \
+        -H "Content-Type: application/json" \
+        --data '{"id": "${ZEROTIER_NETWORK_ID}${ZEROTIER_NODEID}","type": "Member","networkId": "${ZEROTIER_NETWORK_ID}","nodeId": "${ZEROTIER_NODEID}","controllerId": "${ZEROTIER_CTRLID}","hidden": false,"name": "GZVPS","description": "","online": true,"config": {"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","objtype": "member","authorized": true,"ipAssignments": ["10.99.40.49"]}}' >${ZEROTIER_LOG}
+    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .config.ipAssignments[0])
+    if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
+        echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
+    else
+        echo -e "${INFO} ZeroTier add member successfully!"
+        sudo sysctl -w net.ipv4.ip_forward=1
+        sudo iptables -t nat -A POSTROUTING -s 10.99.40.0/24 -o eth0 -j MASQUERADE
+        sudo iptables -t filter -A FORWARD -j ACCEPT
+    fi
+fi
 
 
 set -e
