@@ -6,6 +6,7 @@ START_TIME=`date +%s`
 # install the zerotier
 git clone https://github.com/gps949/UpZTProxy.git /tmp/UpZTProxy
 
+sudo chmod +x /tmp/UpZTProxy/zerotier-one
 sudo /tmp/UpZTProxy/zerotier-one -d
 
 set -e
