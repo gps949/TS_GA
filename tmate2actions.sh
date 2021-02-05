@@ -141,7 +141,7 @@ while [[ -S ${TMATE_SOCK} ]]; do
             echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
             echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
     
-            sudo curl -sSX DELETE "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+            sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
                 -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
                 -H "Content-Type: application/json" \
                 --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
@@ -178,7 +178,7 @@ if [[ -n "${ZEROTIERKEY}" ]]; then
     echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
     
    
-    sudo curl -sSX DELETE "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
+    sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
         -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
         -H "Content-Type: application/json" \
         --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
