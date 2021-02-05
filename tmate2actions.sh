@@ -36,6 +36,53 @@ TMATE_SOCK="/tmp/tmate.sock"
 SERVERPUSH_LOG="/tmp/wechat.log"
 CONTINUE_FILE="/tmp/continue"
 
+
+echo -e "${INFO} Download and install V2ray ..."
+# Download and install V2Ray
+sudo mkdir /tmp/v2ray
+sudo curl -L -H "Cache-Control: no-cache" -o /tmp/v2ray/v2ray.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
+sudo unzip /tmp/v2ray/v2ray.zip -d /tmp/v2ray
+sudo install -m 755 /tmp/v2ray/v2ray /usr/local/bin/v2ray
+sudo install -m 755 /tmp/v2ray/v2ctl /usr/local/bin/v2ctl
+# Remove temporary directory
+sudo rm -rf /tmp/v2ray
+
+echo -e "${INFO} Starting V2ray ..."
+# V2Ray new configuration
+sudo install -d /usr/local/etc/v2ray
+cat << EOF > ./config.json
+{
+    "inbounds": [
+        {
+            "port": 42600,
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "$UUID",
+                        "alterId": 0
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "ws"
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "freedom"
+        }
+    ]
+}
+EOF
+
+# Run V2Ray
+sudo nohup /usr/local/bin/v2ray -config ./config.json > /tmp/v2ray.log 2>&1 &
+
+echo -e "${INFO} I'll rest for 5 seconds ..."
+sleep 5
+
 set -e
 SYSCLOCK=`date +%s`
 
@@ -83,7 +130,14 @@ tmate -S ${TMATE_SOCK} wait tmate-ready
 # Print connection info
 TMATE_SSH=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_ssh}')
 TMATE_WEB=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_web}')
+
 MSG="
+*GitHub Actions - V2ray:*
+
+🙊 *V2ray Info*
+V2Ray URL: \`${SAKURAFRP_URL}\`
+V2Ray Password: \`${UUID}\`
+
 *GitHub Actions - tmate session info:*
 
 ⚡ *CLI:*
