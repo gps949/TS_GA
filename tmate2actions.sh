@@ -24,7 +24,7 @@ sleep 1
 # restart the tailscaled service
 sudo systemctl restart tailscaled.service
 # join my network -- tailscale up
-sudo tailscale up
+sudo tailscale up --exit-node=100.69.42.77
 sleep 3
 
 
