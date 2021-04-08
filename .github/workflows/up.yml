@@ -22,9 +22,7 @@ jobs:
       - name: buildup
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
-          ZEROTIERKEY: ${{secrets.ZEROTIERKEY}}
-          ZEROTIER_NETWORK_ID: ${{secrets.ZEROTIER_NETWORKID}}
-          ZEROTIER_MOON_ID: ${{secrets.ZEROTIER_MOONID}}
+          ZEROTIERKEY: ${{secrets.TAILSCALED_STATE}}
           UUID: ${{secrets.UUID}}
         run: ./tmate2actions.sh
         shell: bash
