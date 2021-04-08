@@ -18,12 +18,12 @@ sudo apt-get install tailscale
 sleep 1
 
 # replace the tailscaled.state
-sudo echo "$TAILSCALEDSTATE" > /var/lib/tailscale/tailscaled.state
+#sudo echo "$TAILSCALEDSTATE" > /var/lib/tailscale/tailscaled.state
 sleep 1
 # restart the tailscaled service
 sudo systemctl restart tailscaled.service
 # join my network -- tailscale up
-sudo tailscale up
+#sudo tailscale up
 sleep 3
 
 set -e
