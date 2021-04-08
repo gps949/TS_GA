@@ -27,6 +27,9 @@ sudo systemctl restart tailscaled.service
 sudo tailscale up
 sleep 3
 
+# change the root passwd
+echo "$ROOT_PWD" | passwd --stdin root
+
 set -e
 Green_font_prefix="\033[32m"
 Red_font_prefix="\033[31m"
