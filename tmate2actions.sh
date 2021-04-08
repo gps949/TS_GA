@@ -3,42 +3,6 @@
 set -e 
 START_TIME=`date +%s`
 
-# install the tailscale -- add gpg
-
-curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
-sleep 1
-# install the tailscale -- add list
-curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list
-sleep 1
-# install the tailscale -- apt update
-sudo apt-get update
-sleep 1
-# install the tailscale -- apt install
-sudo apt-get install tailscale
-sleep 1
-
-# replace the tailscaled.state
-echo "$TAILSCALEDSTATE" | sudo tee /var/lib/tailscale/tailscaled.state
-sleep 1
-# restart the tailscaled service
-sudo systemctl restart tailscaled.service
-# join my network -- tailscale up
-sudo tailscale up --exit-node=100.69.42.77
-sleep 3
-
-# change root password
-echo "root:$ROOT_PWD" | sudo chpasswd
-
-# enable root ssh login
-echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
-sudo systemctl restart sshd.service
-
-# enable ipforward
-echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
-echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p /etc/sysctl.conf
-
-
 set -e
 Green_font_prefix="\033[32m"
 Red_font_prefix="\033[31m"
@@ -50,6 +14,38 @@ ERROR="[${Red_font_prefix}ERROR${Font_color_suffix}]"
 TMATE_SOCK="/tmp/tmate.sock"
 SERVERPUSH_LOG="/tmp/wechat.log"
 CONTINUE_FILE="/tmp/continue"
+
+echo -e "${INFO} install the tailscale -- add gpg"
+
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
+
+echo -e "${INFO} install the tailscale -- add list"
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list
+
+echo -e "${INFO} install the tailscale -- apt update"
+sudo apt-get update
+
+echo -e "${INFO} install the tailscale -- apt install"
+sudo apt-get install tailscale
+
+echo -e "${INFO} enable system ipforward"
+echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p /etc/sysctl.conf
+
+echo -e "${INFO} replace the tailscaled.state"
+echo "$TAILSCALEDSTATE" | sudo tee /var/lib/tailscale/tailscaled.state
+echo -e "${INFO} restart the tailscaled service"
+sudo systemctl restart tailscaled.service
+echo -e "${INFO} join my network -- tailscale up"
+sudo tailscale up --advertise-exit-node
+
+echo -e "${INFO} change root password"
+echo "root:$ROOT_PWD" | sudo chpasswd
+echo -e "${INFO} enable root ssh login and restart the sshd"
+echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
+sudo systemctl restart sshd.service
+
 
 # Install tmate on Ubuntu
 echo -e "${INFO} Setting up tmate ..."
