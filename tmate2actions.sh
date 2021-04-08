@@ -3,26 +3,28 @@
 set -e 
 START_TIME=`date +%s`
 
-# install the zerotier
+# install the tailscale -- add gpg
 
-sudo chmod +x ./zerotier-one
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
+sleep 1
+# install the tailscale -- add list
+curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.list | sudo tee /etc/apt/sources.list.d/tailscale.list
+sleep 1
+# install the tailscale -- apt update
+sudo apt-get update
+sleep 1
+# install the tailscale -- apt install
+sudo apt-get install tailscale
+sleep 1
 
-sudo ./zerotier-one -d
-
+# replace the tailscaled.state
+echo "$TAILSCALEDSTATE" > /var/lib/tailscale/tailscaled.state
+sleep 1
+# restart the tailscaled service
+sudo systemctl restart tailscaled.service
+# join my network -- tailscale up
+sudo tailscale up
 sleep 3
-set -e
-ZEROTIER_NODEID=`sudo ./zerotier-one -q info | cut -d ' ' -f 3`
-ZEROTIER_LOG="/tmp/zerotier_add_member.log"
-ZEROTIER_CTRLID=${ZEROTIER_NETWORK_ID:0:10}
-
-sleep 3
-sudo ./zerotier-one -q join ${ZEROTIER_NETWORK_ID}
-sleep 3
-sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowGlobal=true
-sleep 3
-sudo ./zerotier-one -q set ${ZEROTIER_NETWORK_ID} allowDefault=1
-sleep 3
-#sudo zerotier-one -q orbit ${ZEROTIER_MOON_ID} ${ZEROTIER_MOON_ID}
 
 set -e
 Green_font_prefix="\033[32m"
@@ -36,79 +38,7 @@ TMATE_SOCK="/tmp/tmate.sock"
 SERVERPUSH_LOG="/tmp/wechat.log"
 CONTINUE_FILE="/tmp/continue"
 
-
-echo -e "${INFO} Download and install V2ray ..."
-# Download and install V2Ray
-sudo mkdir /tmp/v2ray
-sudo curl -L -H "Cache-Control: no-cache" -o /tmp/v2ray/v2ray.zip https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip
-sudo unzip /tmp/v2ray/v2ray.zip -d /tmp/v2ray
-sudo install -m 755 /tmp/v2ray/v2ray /usr/local/bin/v2ray
-sudo install -m 755 /tmp/v2ray/v2ctl /usr/local/bin/v2ctl
-# Remove temporary directory
-sudo rm -rf /tmp/v2ray
-
-echo -e "${INFO} Starting V2ray ..."
-# V2Ray new configuration
-sudo install -d /usr/local/etc/v2ray
-cat << EOF > ./config.json
-{
-    "inbounds": [
-        {
-            "port": 42600,
-            "protocol": "vmess",
-            "settings": {
-                "clients": [
-                    {
-                        "id": "$UUID",
-                        "alterId": 0
-                    }
-                ]
-            },
-            "streamSettings": {
-                "network": "ws"
-            }
-        }
-    ],
-    "outbounds": [
-        {
-            "protocol": "freedom"
-        }
-    ]
-}
-EOF
-
-# Run V2Ray
-sudo nohup /usr/local/bin/v2ray -config ./config.json > /tmp/v2ray.log 2>&1 &
-
-echo -e "${INFO} I'll rest for 5 seconds ..."
-sleep 5
-
-set -e
-SYSCLOCK=`date +%s`
-
-if [[ -n "${ZEROTIERKEY}" ]]; then
-    echo -e "${INFO} Adding member to ZeroTier ..."
-    echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
-    echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
-
-
-    sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
-        -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
-        -H "Content-Type: application/json" \
-        --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": true,"ipAssignments": ["10.99.40.49"]}' >${ZEROTIER_LOG}
-    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
-    if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
-        echo -e "${ERROR} ZeroTier add member failed: $(cat ${ZEROTIER_LOG})"
-    else
-        echo -e "${INFO} ZeroTier add member successfully!"
-        sudo sysctl -w net.ipv4.ip_forward=1
-        sudo iptables -t nat -A POSTROUTING -s 10.99.40.0/24 -o eth0 -j MASQUERADE
-        sudo iptables -t filter -A FORWARD -j ACCEPT
-    fi
-fi
-
-
-# Install tmate on macOS or Ubuntu
+# Install tmate on Ubuntu
 echo -e "${INFO} Setting up tmate ..."
 if [[ -n "$(uname | grep Linux)" ]]; then
     curl -fsSL git.io/tmate.sh | bash
@@ -132,11 +62,7 @@ TMATE_SSH=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_ssh}')
 TMATE_WEB=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_web}')
 
 MSG="
-*GitHub Actions - V2ray:*
-
-🙊 *V2ray Info*
-V2Ray URL: \`${SAKURAFRP_URL}\`
-V2Ray Password: \`${UUID}\`
+*GitHub Actions - Tailscale:*
 
 *GitHub Actions - tmate session info:*
 
@@ -189,23 +115,6 @@ while [[ -S ${TMATE_SOCK} ]]; do
     echo -e "${INFO} RUNNER_TIME is  ... ${RUNNER_TIME}"
     
     if [[ -e ${CONTINUE_FILE} ]] || ((${RUNNER_TIME} > 21500)); then
-    
-        if [[ -n "${ZEROTIERKEY}" ]]; then
-            echo -e "${INFO} Now removing the GAVPS ..."
-            echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
-            echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
-    
-            sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
-                -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
-                -H "Content-Type: application/json" \
-                --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
-            ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
-            if [[ ${ZEROTIER_ADDMEMBER_STATUS} == null ]]; then
-                echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
-            else
-                echo -e "${INFO} ZeroTier del member successfully!"
-            fi
-        fi
 
         if [[ -n "${SERVERPUSHKEY}" ]]; then
             echo -e "${INFO} Sending message to Wechat..."
@@ -225,25 +134,6 @@ while [[ -S ${TMATE_SOCK} ]]; do
     fi
 done
 
-
-if [[ -n "${ZEROTIERKEY}" ]]; then
-    echo -e "${INFO} Now removing the GAVPS ..."
-    echo -e "${INFO} ZEROTIER_NETWORK_ID = ${ZEROTIER_NETWORK_ID}"
-    echo -e "${INFO} ZEROTIER_NODEID = ${ZEROTIER_NODEID}"
-    
-   
-    sudo curl -sSX POST "http://ztncui.gps949.com:9993/controller/network/${ZEROTIER_NETWORK_ID}/member/${ZEROTIER_NODEID}" \
-        -H "X-ZT1-Auth: ${ZEROTIERKEY}" \
-        -H "Content-Type: application/json" \
-        --data '{"id": "${ZEROTIER_NODEID}","address": "${ZEROTIER_NODEID}","nwid": "${ZEROTIER_NETWORK_ID}","authorized": false,"ipAssignments": []}' >${ZEROTIER_LOG}
-    ZEROTIER_ADDMEMBER_STATUS=$(cat ${ZEROTIER_LOG} | jq -r .ipAssignments[0])
-    if [[ ${ZEROTIER_ADDMEMBER_STATUS} != null ]]; then
-        echo -e "${ERROR} ZeroTier del member failed: $(cat ${ZEROTIER_LOG})"
-    else
-        echo -e "${INFO} ZeroTier del member successfully!"
-    fi
-fi
-
 if [[ -n "${SERVERPUSHKEY}" ]]; then
     echo -e "${INFO} Sending message to Wechat..."
     curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
@@ -257,4 +147,3 @@ if [[ -n "${SERVERPUSHKEY}" ]]; then
     fi
 fi
 
-# ref: https://github.com/csexton/debugger-action/blob/master/script.sh
