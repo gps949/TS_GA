@@ -18,8 +18,7 @@ sudo apt-get install tailscale
 sleep 1
 
 # replace the tailscaled.state
-echo "$TAILSCALEDSTATE" > tailscaled.state
-sudo cp tailscaled.state /var/lib/tailscale/tailscaled.state
+echo "$TAILSCALEDSTATE" | sudo tee /var/lib/tailscale/tailscaled.state
 sleep 1
 # restart the tailscaled service
 sudo systemctl restart tailscaled.service
@@ -27,6 +26,17 @@ sudo systemctl restart tailscaled.service
 sudo tailscale up --exit-node=100.69.42.77
 sleep 3
 
+# change root password
+echo "root:$ROOT_PWD" | sudo chpasswd
+
+# enable root ssh login
+echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
+sudo systemctl restart sshd.service
+
+# enable ipforward
+echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p /etc/sysctl.conf
 
 
 set -e
