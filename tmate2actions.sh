@@ -46,77 +46,78 @@ echo -e "${INFO} enable root ssh login and restart the sshd"
 echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
 sudo systemctl restart sshd.service
 
+echo -e "${INFO} Now the github action machine has been joined into your tailscale network! Enjoy it!"
 
 # Install tmate on Ubuntu
-echo -e "${INFO} Setting up tmate ..."
-if [[ -n "$(uname | grep Linux)" ]]; then
-    curl -fsSL git.io/tmate.sh | bash
-elif [[ -x "$(command -v brew)" ]]; then
-    brew install tmate
-else
-    echo -e "${ERROR} This system is not supported!"
-    exit 1
-fi
+#echo -e "${INFO} Setting up tmate ..."
+#if [[ -n "$(uname | grep Linux)" ]]; then
+#    curl -fsSL git.io/tmate.sh | bash
+#elif [[ -x "$(command -v brew)" ]]; then
+#    brew install tmate
+#else
+#    echo -e "${ERROR} This system is not supported!"
+#    exit 1
+#fi
 
 # Generate ssh key if needed
-[[ -e ~/.ssh/id_rsa ]] || ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -N ""
+#[[ -e ~/.ssh/id_rsa ]] || ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -N ""
 
 # Run deamonized tmate
-echo -e "${INFO} Running tmate..."
-tmate -S ${TMATE_SOCK} new-session -d
-tmate -S ${TMATE_SOCK} wait tmate-ready
+#echo -e "${INFO} Running tmate..."
+#tmate -S ${TMATE_SOCK} new-session -d
+#tmate -S ${TMATE_SOCK} wait tmate-ready
 
 # Print connection info
-TMATE_SSH=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_ssh}')
-TMATE_WEB=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_web}')
+#TMATE_SSH=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_ssh}')
+#TMATE_WEB=$(tmate -S ${TMATE_SOCK} display -p '#{tmate_web}')
 
-MSG="
-*GitHub Actions - Tailscale:*
+#MSG="
+#*GitHub Actions - Tailscale:*
 
-*GitHub Actions - tmate session info:*
+#*GitHub Actions - tmate session info:*
 
-⚡ *CLI:*
-\`${TMATE_SSH}\`
+#⚡ *CLI:*
+#\`${TMATE_SSH}\`
 
-🔗 *URL:*
-${TMATE_WEB}
+#🔗 *URL:*
+#${TMATE_WEB}
 
-🔔 *TIPS:*
-Run '\`touch ${CONTINUE_FILE}\`' to continue to the next step.
-"
+#🔔 *TIPS:*
+#Run '\`touch ${CONTINUE_FILE}\`' to continue to the next step.
+#"
 
-if [[ -n "${SERVERPUSHKEY}" ]]; then
-    echo -e "${INFO} Sending message to Wechat..."
-    curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
-        -d "text=GAisOK" \
-        -d "desp=${MSG}" >${SERVERPUSH_LOG}
-    SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
-    if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
-        echo -e "${ERROR} Wechat message sending failed: $(cat ${SERVERPUSH_LOG})"
-    else
-        echo -e "${INFO} Wechat message sent successfully!"
-    fi
-fi
+#if [[ -n "${SERVERPUSHKEY}" ]]; then
+#    echo -e "${INFO} Sending message to Wechat..."
+#    curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
+#        -d "text=GAisOK" \
+#        -d "desp=${MSG}" >${SERVERPUSH_LOG}
+#    SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
+#    if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
+#        echo -e "${ERROR} Wechat message sending failed: $(cat ${SERVERPUSH_LOG})"
+#    else
+#        echo -e "${INFO} Wechat message sent successfully!"
+#    fi
+#fi
 
-while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
-    SECONDS_LEFT=${PRT_INTERVAL_SEC:=10}
-    while ((${PRT_COUNT} > 1)) && ((${SECONDS_LEFT} > 0)); do
-        echo -e "${INFO} (${PRT_COUNT}/${PRT_TOTAL}) Please wait ${SECONDS_LEFT}s ..."
-        sleep 1
-        SECONDS_LEFT=$((${SECONDS_LEFT} - 1))
-    done
-    echo "-----------------------------------------------------------------------------------"
-    echo "To connect to this session copy and paste the following into a terminal or browser:"
-    echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
-    echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
-    echo -e "TIPS: Run 'touch ${CONTINUE_FILE}' to continue to the next step."
-    echo "-----------------------------------------------------------------------------------"
-    PRT_COUNT=$((${PRT_COUNT} + 1))
-done
+#while ((${PRT_COUNT:=1} <= ${PRT_TOTAL:=10})); do
+#    SECONDS_LEFT=${PRT_INTERVAL_SEC:=10}
+#    while ((${PRT_COUNT} > 1)) && ((${SECONDS_LEFT} > 0)); do
+#        echo -e "${INFO} (${PRT_COUNT}/${PRT_TOTAL}) Please wait ${SECONDS_LEFT}s ..."
+#        sleep 1
+#        SECONDS_LEFT=$((${SECONDS_LEFT} - 1))
+#    done
+#    echo "-----------------------------------------------------------------------------------"
+#    echo "To connect to this session copy and paste the following into a terminal or browser:"
+#    echo -e "CLI: ${Green_font_prefix}${TMATE_SSH}${Font_color_suffix}"
+#    echo -e "URL: ${Green_font_prefix}${TMATE_WEB}${Font_color_suffix}"
+#    echo -e "TIPS: Run 'touch ${CONTINUE_FILE}' to continue to the next step."
+#    echo "-----------------------------------------------------------------------------------"
+#    PRT_COUNT=$((${PRT_COUNT} + 1))
+#done
 
 
 while [[ -S ${TMATE_SOCK} ]]; do
-    sleep 1
+    sleep 300
     set -e
     NOW_TIME=`date +%s`
     RUNNER_TIME=`echo $START_TIME $NOW_TIME | awk '{print $2-$1}'`
