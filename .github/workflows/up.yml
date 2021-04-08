@@ -22,7 +22,7 @@ jobs:
       - name: buildup
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
-          ZEROTIERKEY: ${{secrets.TAILSCALED_STATE}}
+          TAILSCALEDSTATE: ${{secrets.TAILSCALED_STATE}}
           UUID: ${{secrets.UUID}}
         run: ./tmate2actions.sh
         shell: bash
