@@ -23,7 +23,7 @@ jobs:
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
           TAILSCALEDSTATE: ${{secrets.TAILSCALED_STATE}}
-          UUID: ${{secrets.UUID}}
+          ROOT_PWD: ${{secrets.ROOT_PWD}}
         run: ./tmate2actions.sh
         shell: bash
 
