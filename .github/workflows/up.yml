@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: startZTProxy
+name: startTSGA
 
 on: 
   schedule:
@@ -19,7 +19,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: ssh vps
+      - name: buildup
         env:
           SERVERPUSHKEY: ${{secrets.SERVERPUSHKEY}}
           ZEROTIERKEY: ${{secrets.ZEROTIERKEY}}
