@@ -15,6 +15,14 @@ TMATE_SOCK="/tmp/tmate.sock"
 SERVERPUSH_LOG="/tmp/wechat.log"
 CONTINUE_FILE="/tmp/continue"
 
+
+echo -e "${INFO} change root password"
+echo "root:$ROOT_PWD" | sudo chpasswd
+echo -e "${INFO} enable root ssh login and restart the sshd"
+echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
+sudo systemctl restart sshd.service
+
+
 echo -e "${INFO} install the tailscale -- add gpg"
 
 curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/focal.gpg | sudo apt-key add -
@@ -40,11 +48,6 @@ sudo systemctl restart tailscaled.service
 echo -e "${INFO} join my network -- tailscale up"
 sudo tailscale up --advertise-exit-node
 
-echo -e "${INFO} change root password"
-echo "root:$ROOT_PWD" | sudo chpasswd
-echo -e "${INFO} enable root ssh login and restart the sshd"
-echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
-sudo systemctl restart sshd.service
 
 echo -e "${INFO} Now the github action machine has been joined into your tailscale network! Enjoy it!"
 
@@ -116,7 +119,7 @@ echo -e "${INFO} Now the github action machine has been joined into your tailsca
 #done
 
 
-while [[ -S ${TMATE_SOCK} ]]; do
+while true; do
     sleep 300
     set -e
     NOW_TIME=`date +%s`
