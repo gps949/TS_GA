@@ -132,8 +132,8 @@ while true; do
 
         if [[ -n "${SERVERPUSHKEY}" ]]; then
             echo -e "${INFO} Sending message to Wechat..."
-            curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
-                -d "text=前一设备已下线！" \
+            curl -sSX POST "${ServerPush_API_URL:-https://sctapi.ftqq.com}/${SERVERPUSHKEY}.send" \
+                -d "title=前一设备已下线！" \
                 -d "desp=前一设备已下线！" >${SERVERPUSH_LOG}
             SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
             if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
@@ -150,8 +150,8 @@ done
 
 if [[ -n "${SERVERPUSHKEY}" ]]; then
     echo -e "${INFO} Sending message to Wechat..."
-    curl -sSX POST "${ServerPush_API_URL:-https://sc.ftqq.com}/${SERVERPUSHKEY}.send" \
-        -d "text=前一设备已下线！" \
+    curl -sSX POST "${ServerPush_API_URL:-https://sctapi.ftqq.com}/${SERVERPUSHKEY}.send" \
+        -d "title=前一设备已下线！" \
         -d "desp=前一设备已下线！" >${SERVERPUSH_LOG}
     SERVERPUSH_STATUS=$(cat ${SERVERPUSH_LOG} | jq -r .errno)
     if [[ ${SERVERPUSH_STATUS} != 0 ]]; then
