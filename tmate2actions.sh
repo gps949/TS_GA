@@ -47,7 +47,7 @@ echo "$TAILSCALEDSTATE" | sudo tee /var/lib/tailscale/tailscaled.state
 echo -e "${INFO} restart the tailscaled service"
 sudo systemctl restart tailscaled.service
 echo -e "${INFO} join my network -- tailscale up"
-sudo tailscale up --advertise-exit-node
+sudo tailscale up --advertise-exit-node --accept-dns=false 
 
 
 echo -e "${INFO} Now the github action machine has been joined into your tailscale network! Enjoy it!"
